@@ -2,17 +2,12 @@ import pygame
 import os
 import sys
 import FileReadAndWrite as frw
-import time #시작메뉴 전환 1초후 화면전환
-import pyautogui # https://pyautogui.readthedocs.io/en/latest/msgbox.html
+import pyautogui 
 
 
-class Controller(): # 메인 컨트롤러 (얘가 반복문 안에서 화면에 표시할 내용 정해줄 거)
+class Controller():
     def __init__(self):
         self.currentState = 1
-        # 1 : 시작 화면
-        # 2 : 음악 선택 화면
-        # 3 : 게임 플레이 화면
-        # 4 : 트랙 추가 화면
         self.pastState = self.currentState
         self.isChanged = False
         self.vo = None
@@ -113,8 +108,8 @@ class StartController():
         elif eventB == "quit":
             return "gameEnd"
 
-class MusicChoiceController(): # 음악 선택 화면 구현
-    def __init__(self): # 여기다가 변수 선언하면 됨
+class MusicChoiceController(): 
+    def __init__(self): 
         dao = frw.DAO()
         self.musicList = dao.getMusicData()
         self.index = 0
@@ -122,7 +117,7 @@ class MusicChoiceController(): # 음악 선택 화면 구현
         self.arr = []
     
     def listOnScreen(self):
-        FONT = pygame.font.Font(None,40)                         # 노래 제목 폰트 크기 지정
+        FONT = pygame.font.Font(None,40)                       
         self.arr = []
 
         for i in range(5):
@@ -131,8 +126,8 @@ class MusicChoiceController(): # 음악 선택 화면 구현
         screen = pygame.display.get_surface()
         
         for i in range(5):
-            pygame.draw.rect(screen, colorSampleDict["white"], (30, 150 + (i * 100), 70 + self.arr[i] * 14, 50))    # [5]
-            pygame.draw.rect(screen, colorSampleDict["skyblue"], (30, 150 + (i * 100), 70 + self.arr[i] * 14, 50), 5)    # [5]
+            pygame.draw.rect(screen, colorSampleDict["white"], (30, 150 + (i * 100), 70 + self.arr[i] * 14, 50))  
+            pygame.draw.rect(screen, colorSampleDict["skyblue"], (30, 150 + (i * 100), 70 + self.arr[i] * 14, 50), 5)    
             musicName = FONT.render(self.musicList[self.index + i].getMusicName(),True, colorSampleDict["black"])
             screen.blit(musicName,[40, 160 + (i * 100)])
 
@@ -150,15 +145,15 @@ class MusicChoiceController(): # 음악 선택 화면 구현
         screen = pygame.display.get_surface()
 
         x = 1600 - (len(vo.getMusicName()) * 35)
-        pygame.draw.rect(screen, colorSampleDict["white"], (x, 150, 175 + len(vo.getMusicName()) * 35, 100))    # [5]
-        pygame.draw.rect(screen, colorSampleDict["skyblue"], (x, 150, 175 + len(vo.getMusicName())* 35, 100), 5)    # [5]
+        pygame.draw.rect(screen, colorSampleDict["white"], (x, 150, 175 + len(vo.getMusicName()) * 35, 100))  
+        pygame.draw.rect(screen, colorSampleDict["skyblue"], (x, 150, 175 + len(vo.getMusicName())* 35, 100), 5)   
         musicName = FONT.render(vo.getMusicName(),True, colorSampleDict["black"])
         screen.blit(musicName,[x + 10, 160])
 
         FONT = pygame.font.Font(None,40)
         x = 1700 - (len(vo.getAuthorName()) * 14)
-        pygame.draw.rect(screen, colorSampleDict["white"], (x, 300, 70 + len(vo.getAuthorName()) * 14, 50))    # [5]
-        pygame.draw.rect(screen, colorSampleDict["skyblue"], (x, 300, 70 + len(vo.getAuthorName()) * 14, 50), 5)    # [5]
+        pygame.draw.rect(screen, colorSampleDict["white"], (x, 300, 70 + len(vo.getAuthorName()) * 14, 50))    
+        pygame.draw.rect(screen, colorSampleDict["skyblue"], (x, 300, 70 + len(vo.getAuthorName()) * 14, 50), 5)   
         authorName = FONT.render(vo.getAuthorName(),True, colorSampleDict["black"])
         screen.blit(authorName,[x + 10, 310]) 
 
@@ -166,8 +161,8 @@ class MusicChoiceController(): # 음악 선택 화면 구현
         if len(score) <= 7:
             score = ("0" * (7 - len(score))) + score
         x = 1700 - len(score) * 14
-        pygame.draw.rect(screen, colorSampleDict["white"], (x, 550, 70 + len(score) * 14, 50))    # [5]
-        pygame.draw.rect(screen, colorSampleDict["skyblue"], (x, 550, 70 + len(score) * 14, 50), 5)    # [5]
+        pygame.draw.rect(screen, colorSampleDict["white"], (x, 550, 70 + len(score) * 14, 50))   
+        pygame.draw.rect(screen, colorSampleDict["skyblue"], (x, 550, 70 + len(score) * 14, 50), 5)   
         score = FONT.render(score,True, colorSampleDict["black"])
         screen.blit(score,[x + 10, 560])
     
@@ -204,7 +199,6 @@ class MusicChoiceController(): # 음악 선택 화면 구현
         if pygame.mouse.get_pressed()[0]:
             mouseX, mouseY = pygame.mouse.get_pos()
             if mouseX in range(1770 - 175, 1770) and mouseY in range(800, 800 + 100):
-                # print("clickPlayButton")
                 return "play"
 
     def plusButtonEvent(self):
@@ -248,12 +242,12 @@ class MusicChoiceController(): # 음악 선택 화면 구현
         
 class GameController():
     def __init__(self, *args):
-        self.state = 1 # 1 : 변수 설정, 2 : 게임플레이, 3 : 점수 화면, 4 : 게임오버
+        self.state = 1 
         self.fps = 60
         self.hpAndScore = None
         self.musicVO = args[0]
         self.boxArr = [] # 
-        self.noteArr = [[], [], [], []] # 노트 
+        self.noteArr = [[], [], [], []]
         self.notes = []
         self.events = None
         self.keys = None
@@ -261,7 +255,6 @@ class GameController():
         self.endEvent = None
     
     def start(self):
-        # self.musicVO = musicVO # 바꿔야 함
         pygame.mixer.music.load(frw.getFilePath(self.musicVO.getMusicPath(), "mp3"))
         self.hpAndScore = HpAndScore()
         
@@ -280,7 +273,7 @@ class GameController():
             self.getKeysAndEvents()
             self.createNoteArr()
             screen = pygame.display.get_surface()
-            for event in pygame.event.get(): # 이 반복문이 현재 작동 안함(checkBoxEvent함수에 수정본 추가)
+            for event in pygame.event.get(): 
                 if event.type == pygame.KEYUP:
                     for obj in self.boxArr:
                         obj.clickCountReset(event.key)
@@ -290,12 +283,11 @@ class GameController():
                         status = self.noteArr[i][0].checkHeightForScore(obj.clickBoxIndexY, obj.height)
                         del self.noteArr[i][0]
                         self.hpAndScore.calcScore(status)
-                        # 점수 확인 추가 필요
                     else:
-                        self.hpAndScore.decreaseHp() # hp 감소
+                        self.hpAndScore.decreaseHp() 
                 else:
                     pass
-            for i, track in enumerate(self.noteArr): # [[obj, obj], [], [], []]
+            for i, track in enumerate(self.noteArr): 
                 for obj in track:
                     pygame.draw.rect(screen, obj.getBoxColor(), obj.getBoxPos())
                     outScreen = obj.moveDown(self.fps)
@@ -310,7 +302,6 @@ class GameController():
                 pygame.draw.rect(screen, obj.getBoxColor(), obj.getBoxPos(), obj.getBoxBorder())
                 obj.resetAfterFrame()
             
-            # print(hpAndScoreData.getHpAndScore())
             self.hpAndScore.createHpBoxWithGradient(screen, colorSampleDict["red"], colorSampleDict["yellow"], pygame.Rect(10, 10, 300, 30))
             self.hpAndScore.scoreOnScreen()
             self.hpAndScore.comboOnScreen()
@@ -322,7 +313,6 @@ class GameController():
     
     def showScore(self):
         screen = pygame.display.get_surface()
-        # 점수 저장
         font = pygame.font.SysFont("arial", 100, bold=True, italic=False)
         text1 = font.render("Congratulations!", True, colorSampleDict["white"])
         font = pygame.font.SysFont("arial", 50, bold=True, italic=False)
@@ -337,12 +327,6 @@ class GameController():
                 return "backToChoice"
 
     def gameEndCheck(self):
-        # for event in pygame.event.get():
-        #     if event.type == pygame.QUIT:
-        #         pass
-        #     if event.type == self.endEvent or event.type == pygame.mixer.music.get_endevent():
-        #         print("endEvent 작동")
-        #         self.state = 3
         if not pygame.mixer.music.get_busy() and not self.hpAndScore.isGameEnd():
             self.state = 3
             print(self.dao.updateScoreData(self.musicVO.getMusicNum(), self.hpAndScore.score))
@@ -356,7 +340,6 @@ class GameController():
         screen.blit(text1, (1920 / 2 - 200, 1080 / 4))
         posX, posY = int((1920 / 2) - 30), int((1080 / 4) * 3)
         screen.blit(text2, (posX, posY))
-        # print("go")
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pass
@@ -374,7 +357,6 @@ class GameController():
         self.events = pygame.event.get()
         
     def getNotes(self):
-        # print(self.dao.getNoteData(self.musicVO.getMusicNum()))
         self.notes = self.dao.getNoteData(self.musicVO.getMusicNum())
     
     def createNoteArr(self):
@@ -393,24 +375,20 @@ class GameController():
             self.notes.remove(note)
     
     def gameOverCheck(self):
-        # for event in self.events:
-        #     if event.type == self.endEvent:
-        #         self.state += 1
         if self.hpAndScore.isGameEnd():
             pygame.mixer.music.stop()
             self.state = 4
        
     def mainFunction(self):
-        # print(self.state)
-        if self.state == 1: # 초기 세팅
+        if self.state == 1: 
             self.start() 
-        elif self.state == 2: # 플레이 중
+        elif self.state == 2:
             self.playing()
-        elif self.state == 3: # 점수 표시
+        elif self.state == 3: 
             event = self.showScore()
             if event == "backToChoice":
                 return event
-        elif self.state == 4: # 게임 오버
+        elif self.state == 4: 
             event = self.gameOver()
             if event == "backToChoice":
                 return event
@@ -419,15 +397,14 @@ class GameController():
             
 class ClickBox():
     def __init__(self, railNum):
-        self.railNum = railNum # 레일 넘버
-        self.width = 100 # 상자 넓이
-        self.height = 50 # 상자 높이
-        self.isClicked = False # 키를 눌렀는가 눌렀는가
-        self.border = 5 # 테두리 두께
+        self.railNum = railNum 
+        self.width = 100 
+        self.height = 50 
+        self.isClicked = False 
+        self.border = 5 
         self.boxColor = colorSampleDict["white"]
-        self.clickBoxIndexY = 1080 - int(1080 * 0.2) # 상자 위치 Y 설정
+        self.clickBoxIndexY = 1080 - int(1080 * 0.2) 
         self.clickCount = 0
-        # 상자 위치 X 설정
         self.clickBoxIndexX = getXIndexWithRailNum(self.railNum, self.width)
         if railNum == 0:
             self.eventKey = pygame.K_s
@@ -439,22 +416,12 @@ class ClickBox():
             self.eventKey = pygame.K_l
         else:
             self.eventKey = pygame.K_s
-        
-    """
-    def clickboxImageChange(self, key): #노트 바닥 이미지 변경
-        image1 = pygame.image.load("노트바닥.png")
-        image2 = pygame.image.load("노트 바닥 이펙트.png")
-        if key[self.eventkey] != 1:
-            self.blit(image1)
-        if key[self.eventkey] == 1:
-            self.blit(image2)
-    """
     
-    def resetAfterFrame(self): # 1프레임 마다 초기화
+    def resetAfterFrame(self): 
         self.isClicked = False
         self.boxColor = colorSampleDict["white"]
         
-    def checkBoxEvent(self, key): # 키 입력 이벤트
+    def checkBoxEvent(self, key): 
         if key[self.eventKey] == 1:
             self.isClicked = True
             self.boxColor = colorSampleDict["gray"]
@@ -465,25 +432,18 @@ class ClickBox():
                 return False
         else: # 수정본
             self.clickCount = 0
-            # if self.clickCount == 1:
-            #     global railBoxArr
-            #     if len(railBoxArr[self.railNum]) > 0:
-            #         railBoxArr[self.railNum][0].checkHeightForScore(self.clickBoxIndexY, self.height, level)
-            #         del railBoxArr[self.railNum][0]
-            #     else:
-            #         pass
     
     def clickCountReset(self, key):
         if key == self.eventKey:
             self.clickCount = 0
             
-    def getBoxColor(self): # 상자 색깔 반환
+    def getBoxColor(self):
         return self.boxColor
     
-    def getBoxPos(self): # 상자 위치 반환
+    def getBoxPos(self): 
         return (self.clickBoxIndexX, self.clickBoxIndexY, self.width, self.height)
     
-    def getBoxBorder(self): # 상자 테두리 두께 반환
+    def getBoxBorder(self):
         return self.border     
     
     def getEventState(self):
@@ -491,29 +451,17 @@ class ClickBox():
 
 class Note():
     def __init__(self, railNum, boxColor):
-        self.railNum = railNum # 레일 넘버
-        self.width = 100 # 상자 넓이
-        self.height = 50 # 상자 높이
-        self.boxColor = boxColor # 상자 색깔
-        self.noteIndexY = 0 - self.height # 상자 위치 Y 설정
-        self.noteIndexX = getXIndexWithRailNum(railNum, self.width) # 상자 위치 X 설정
-        self.boxSpeed = 300 # 초당 움직이는 픽셀
-    """
-    def noteImageChange(self): #내려오는 노트의 이미지 변경
-        image = pygame.image.load("노트.png")
-        self.blit(image)
-    """
+        self.railNum = railNum 
+        self.width = 100 
+        self.height = 50 
+        self.boxColor = boxColor 
+        self.noteIndexY = 0 - self.height 
+        self.noteIndexX = getXIndexWithRailNum(railNum, self.width) 
+        self.boxSpeed = 300 
+
     def moveDown(self, fps):
         self.noteIndexY = self.noteIndexY + int(self.boxSpeed / fps)
         return self.getIsNoteOutOfScreen()
-        # if self.getIsNoteOutOfScreen():
-        #     hpAndScoreData.calcScore("Miss", level)
-        #     for i in range(len(railBoxArr)):
-        #         arr = railBoxArr[i]
-        #         if self in arr:
-        #             arr.remove(self)
-        #             railBoxArr[i] = arr
-        #             break
         
     def getIsNoteOutOfScreen(self):
         if self.noteIndexY >= 1080:
@@ -535,10 +483,10 @@ class Note():
         else:
             return "Miss"
         
-    def getBoxColor(self): # 상자 색깔 반환
+    def getBoxColor(self): 
         return self.boxColor
     
-    def getBoxPos(self): # 상자 위치 반환
+    def getBoxPos(self): 
         return (self.noteIndexX, self.noteIndexY, self.width, self.height)
     
 class HpAndScore():
@@ -614,7 +562,6 @@ class HpAndScore():
         self.combo = 0
     
     def createHpBoxWithGradient(self, screen, left_color, right_color, target_rect):
-        # https://stackoverflow.com/questions/62336555/how-to-add-color-gradient-to-rectangle-in-pygame 참고함
         color_rect = pygame.Surface((2, 2))
         pygame.draw.line(color_rect, left_color, (0, 0), (0, 1))
         pygame.draw.line(color_rect, right_color, (1, 0), (1, 1))
@@ -627,7 +574,7 @@ class HpAndScore():
 class AddTrackController():
     def __init__(self):
         self.musicVO = None
-        self.noteArr = [] # 트랙 추가 함수
+        self.noteArr = [] 
         self.keys = []
         self.status = 1
         self.clicked = [False, False, False, False]
@@ -658,7 +605,7 @@ class AddTrackController():
         if not pygame.mixer.music.get_busy():
             self.status = 3
 
-    def saveData(self): # 교체 예정 저장안되는중
+    def saveData(self): 
         self.dao.addNoteData({"musicNum" : self.musicVO.getMusicNum(), "note" : self.noteArr})
         print(self.noteArr)
         return "returnChoice"
@@ -722,7 +669,6 @@ class AddTrackController():
         else:
             pass
         
-# 레일 번호 별로 X 좌표 반환
 def getXIndexWithRailNum(railNum, width):
     if railNum == 0:
         return int(1920 / 2) - int(width * 2)
@@ -765,11 +711,7 @@ def main():
         clock = pygame.time.Clock()
         fps = 60
         
-        # vo = frw.musicVO()
-        # vo.musicNum = 10000001
-        # vo.musicPath = "AJR - World's Smallest Violin.mp3"
-        # GC = GameController()
-        # GC.start(vo)
+
         controller = Controller()
             
         isRunning = True 
@@ -813,111 +755,3 @@ if __name__ == "__main__":
 
 
 
-
-
-
-            # if currentState == 1:
-            #     createStartScreen(screen, screen_width, screen_height)
-            # elif currentState == 2:
-            #     screen.fill(colorSampleDict["red"])
-                
-            #     pass
-            # elif currentState == 3:
-            #     screen.fill(colorSampleDict["blue"])
-                
-            #     pass
-            # elif currentState == 4:
-            #     screen.fill(colorSampleDict["black"])
-                
-            #     pass
-            # elif currentState == 5:
-            #     pass
-            # else:
-            #     currentState = 1
-            #     pass
-            
-            # clickBoxColorArr = [colorSampleDict["white"], colorSampleDict["white"], colorSampleDict["white"], colorSampleDict["white"]]
-            
-            
-            # for event in pygame.event.get():
-            #     if event.type == pygame.QUIT:
-            #         isRunning = False
-                    
-            #     if event.type == pygame.KEYDOWN:
-            #         if event.key == pygame.K_ESCAPE:
-            #             isRunning = False
-                    
-            #     if event.type == pygame.KEYUP:
-            #         for obj in clickBoxArr:
-            #             obj.clickCountReset(event.key)
-            # index = 0 # 0 ~ 4            
-            #     if event.type == pygame.MOUSEWHEEL:
-            #         if event.y > 0:
-            #             index -= 1
-            #         elif event.y < 0:
-            #             print("마우스 내리는 중")
-            #             index += 1
-            #         else:
-            #             pass
-            
-            
-            # isClickBoxClicked = [False, False, False, False]
-            # key = pygame.key.get_pressed()
-            # # print(key[pygame.K_s], key[pygame.K_d], key[pygame.K_j], key[pygame.K_k])
-            # if key[pygame.K_s] == 1:
-            #     isClickBoxClicked[0] = True
-            #     clickBoxColorArr[0] = colorSampleDict["blue"]
-            # if key[pygame.K_d] == 1:
-            #     isClickBoxClicked[1] = True
-            #     clickBoxColorArr[1] = colorSampleDict["blue"]
-            # if key[pygame.K_j] == 1:
-            #     isClickBoxClicked[2] = True
-            #     clickBoxColorArr[2] = colorSampleDict["blue"]
-            # if key[pygame.K_k] == 1:
-            #     isClickBoxClicked[3] = True
-            #     clickBoxColorArr[3] = colorSampleDict["blue"]
-            # print(isClickBoxClicked)
-            
-            # """
-            # key = pygame.key.get_pressed()
-            # for i, obj in enumerate(clickBoxArr):
-            #     obj.checkBoxEvent(key, level = 1)
-            # """
-            
-            # 배열로 정리해서 모았다가 한번에 띄우는 방식으로 만들어야 할듯            
-            # text, textRect = createSurfaceInScreen("Hello", 30, colorSampleDict["black"], colorSampleDict["white"], (screen_width / 2, screen_height / 2))
-            # screen.blit(text, textRect)
-            
-            # clickBoxHeight = screen_height - screen_height * 0.2
-            # clickBoxWidth = [(1920 / 2) - 350, (1920 / 2) - 150, (1920 / 2) + 50, (1920 / 2) + 250]
-            # screenObjectArr = []
-            
-            # movingBoxPos = (clickBoxWidth[0], 0 - 50 + minusHeight, 100, 50)
-            # pygame.draw.rect(screen, colorSampleDict["red"], movingBoxPos)
-            # minusHeight += 5
-            # if minusHeight > screen_height:
-            #     minusHeight = 0
-            
-            # for i in range(4):
-            #     screenObjectArr.append((clickBoxWidth[i], clickBoxHeight, 100, 50))
-            # # pygame.draw.rect(screen, colorSampleDict["white"], (100, 100, 100, 100))
-            # for i, j in enumerate(screenObjectArr):
-            #     pygame.draw.rect(screen, clickBoxColorArr[i], j, 5)
-            
-            # """
-            # for i, arr in enumerate(railBoxArr):
-            #     if arr == []:
-            #         arr.append(Note(i, 60, colorSampleDict["red"]))
-            
-            # for arr in railBoxArr: # [[obj, obj], [], [], []]
-            #     for obj in arr:
-            #         pygame.draw.rect(screen, obj.getBoxColor(), obj.getBoxPos())
-            #         obj.moveDown(fps, level = 1)
-            
-            # for obj in clickBoxArr:
-            #     pygame.draw.rect(screen, obj.getBoxColor(), obj.getBoxPos(), obj.getBoxBorder())
-            #     obj.resetAfterFrame()
-            
-            # # print(hpAndScoreData.getHpAndScore())
-            # hpAndScoreData.createHpBoxWithGradient(screen, colorSampleDict["red"], colorSampleDict["yellow"], pygame.Rect(10, 10, 300, 30))
-            # """

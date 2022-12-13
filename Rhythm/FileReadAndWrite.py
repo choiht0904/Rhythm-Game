@@ -1,12 +1,11 @@
-import csv # https://docs.python.org/ko/3/library/csv.html
+import csv 
 from pytube import YouTube
-import ffmpeg # subprocess로 ffmpeg 사용 (아마 이 모듈은 코드상에선 안 쓸듯)
+import ffmpeg 
 import os
 import subprocess
-import re # 정규표현식
-import json # https://docs.python.org/ko/3/library/json.html
+import re 
+import json 
 
-# 파일 경로 찾기
 def getFilePath(fileName, fileType):
     try:
         dirPath = os.path.dirname(__file__)
@@ -26,11 +25,6 @@ def getFilePath(fileName, fileType):
         return filePath
     except Exception as e:
         return "canNotFindFilePath"
-
-# https://twpower.github.io/17-with-usage-in-python
-# r : 읽기모드
-# w : 쓰기모드
-# a : 추가모드
 
 class DAO():
     def __init__(self):
@@ -129,13 +123,13 @@ class DAO():
             print("getNoteData |", e)
             return "fail"
     
-    def addNoteData(self, data): # data 형식은 dictionary
+    def addNoteData(self, data): 
         try:
             noteArr = self.getAllNoteData()
             if noteArr != "fail":
                 for obj in noteArr:
                     if obj["musicNum"] == data["musicNum"]:
-                        return "duplicateValue" # 중복값
+                        return "duplicateValue"
                 if type(data["musicNum"]) is str:
                     data["musicNum"] = int(data["musicNum"])
                 noteArr.append(data)
@@ -205,8 +199,7 @@ class VideoDownloader():
         self.musicPath = ""
         self.dao = DAO()
     
-    def __createFileNameWithTitleAndAuthor(self, authorStr, titleStr): # file명 생성
-        # print("=== createFileNameWithTitleAndAuthor ===")
+    def __createFileNameWithTitleAndAuthor(self, authorStr, titleStr): 
         filterWord = re.compile(r"[a-zA-Z]")
         value = ""
         for c in authorStr:
@@ -248,27 +241,18 @@ class VideoDownloader():
         else:
             return str
 
-    def __getVideoFromYoutube(self, url): # 유튜브에서 영상 다운해서 mp3로 저장
-        # https://pytube.io/en/latest/user/exceptions.html      pytube 
-        # https://docs.python.org/3.9/library/subprocess.html   subprocess
+    def __getVideoFromYoutube(self, url):
         try:
             mp3FolderPath = ""
             dirPath = os.path.dirname(__file__)
             mp3FolderPath = os.path.join(dirPath, "mp3")
-            # print(mp3FolderPath) 
             fileName = ""
-            if "www.youtube.com/watch?v=" in url: # https://www.youtube.com/watch?v=_G4wz7vmH5E
+            if "www.youtube.com/watch?v=" in url: 
                 yt = YouTube(url)
-                # print(yt.title) # 영상 제목
-                # print(yt.author) # 영상 게시자
-                # print(yt.thumbnail_url) # 썸네일 주소
-                # yt.streams.first().download(mp3FolderPath)
-                # fileName = f"{yt.author} - {yt.title}"
                 self.videoAuthor = self.__createAuthorName(yt.author)
                 self.videoTitle = self.__createMusicName(yt.title)
                 fileName = self.__createFileNameWithTitleAndAuthor(yt.author, yt.title)
                 self.musicPath = fileName[0:-3] + "mp3"
-                # print(yt.description)
                 
                 yt_streams = yt.streams.filter(only_audio=True).first()
                 targetFile = yt_streams.download(output_path=mp3FolderPath, filename=fileName) # 다운로드 된 파일 (mp4)
@@ -278,10 +262,9 @@ class VideoDownloader():
                 os.remove(targetFile)
                 
                 return "success"
-            elif "youtu.be/" in url: # https://youtu.be/_G4wz7vmH5E
+            elif "youtu.be/" in url:
                 arr = url.split("/")
                 str = f"www.youtube.com/watch?v={arr[len(arr) - 1]}"
-                # print(str)
                 return self.__getVideoFromYoutube(str)
             else:
                 print("wrong url")
@@ -309,7 +292,6 @@ class VideoDownloader():
                 vo = self.getMusicVO()
                 status2 = self.dao.addMusicData(vo)
                 return status2
-            # 여기서 csv에 저장하는 코드 삽입 예정
         elif status == "runningException":
             return status
         elif status == "urlError":
@@ -357,49 +339,3 @@ class musicVO():
     
     def setScore(self, score):
         self.score = score
-
-    
-        
- 
-# 코드 테스트용
-def main():
-    # dao = DAO()
-    # print(dao.updateScoreData(10000001, 10))
-    # vo = musicVO()
-    # vo.setAuthorName("sample")
-    # vo.setMusicName("sample1")
-    # vo.setMusicNum(dao.getMaxMusicNum())
-    # vo.setMusicPath("sample")
-    # vo.setScore(0)
-    # dao.addMusicData(vo)
-    # print(dao.getMusicData())
-    # arr = dao.getMusicData()
-    # for i in arr:
-    #     print(i.toString())
-    # print(dao.getNoteData(10000001))
-    # print(dao.addNoteData({'musicNum': 10000002, 'note': ["111:1", "1234:1234"]}))
-    # dao.getMusicData()
-    # dao.getNoteData()
-    # dao.saveNoteDataToCSV(12)   
-        
-    # vd = VideoDownloader()
-    # vd.download("https://www.youtube.com/watch?v=cHHLHGNpCSA")
-    # command = getVideoFromYoutube("https://www.youtube.com/watch?v=_G4wz7vmH5E")
-
-    
-    # if command == "":
-    #     pass
-    # elif command == "":
-    #     pass
-    # else:
-    #     try :
-    #         print("convertFileToMp3")
-    #         print(command)
-    #         subprocess.run(command)           
-    #     except Exception as e:
-    #         print(e)
-    pass
-
-    
-if __name__ == "__main__":
-    main()
